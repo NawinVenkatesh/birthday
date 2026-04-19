@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise for You</title>
+    <style>
+        /* ROMANTIC THEME STYLING */
+        body {
+            margin: 0;
+            background: #fff0f3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #5c0a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(255, 75, 110, 0.2);
+            border: 2px solid #ffccd5;
+            max-width: 450px;
+            width: 85%;
+            position: relative;
+        }
+        section { display: none; animation: fadeIn 0.8s ease-in-out; }
+        .active { display: block; }
+        h1 { font-size: 1.8rem; color: #ff4d6d; }
+        button {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            margin: 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        button:hover { background: #c9184a; transform: scale(1.05); }
+        .letter-box {
+            background: #fffcf2;
+            padding: 25px;
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            text-align: left;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        .gift-options button { width: 80%; background: #ff8fa3; }
+        .gift-result { margin-top: 20px; font-weight: bold; color: #ff4d6d; font-size: 1.2rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <section id="page1" class="active">
+            <h1 id="greeting-text">Hi!</h1>
+            <p>Ready for your surprise? ❤️</p>
+            <button onclick="showPage('page_yes')">Yes</button>
+            <button onclick="showPage('page_no')">No</button>
+        </section>
+
+        <section id="page_no">
+            <h1>You missed a great surprise 😔</h1>
+            <p>I had so much planned for you!</p>
+        </section>
+
+        <section id="page_yes">
+            <h1>Ready to get amused! ✨</h1>
+            <button onclick="showPage('page_letter')">Ready</button>
+        </section>
+
+        <section id="page_letter">
+            <div class="letter-box">
+                <h2>To my dearest wife,</h2>
+                <p>Happy Birthday! You make every day brighter. I still remember our trip to Trichy and Tanjore as if it were yesterday—it's when I knew you were the one. I hope this little surprise makes you smile as much as you make me smile.</p>
+                <p>Always yours ❤️</p>
+            </div>
+            <button onclick="showPage('page_gifts')">Continue ❤️</button>
+        </section>
+
+        <section id="page_gifts">
+            <h1>Choose a gift you need:</h1>
+            <div class="gift-options">
+                <button onclick="openGift('photo')">🖼️ A Photo</button>
+                <button onclick="openGift('song')">🎵 A Song</button>
+                <button onclick="openGift('gift')">🎁 A Gift in Hand</button>
+                <button onclick="openGift('food')">🍴 Favourite Food Date</button>
+            </div>
+            <div id="gift-display" class="gift-result"></div>
+            <div id="happy-check-area" style="display:none; margin-top: 20px;">
+                <p>Are you happy with this gift?</p>
+                <button onclick="finalAnswer(true)">Yes</button>
+                <button onclick="finalAnswer(false)">No</button>
+            </div>
+        </section>
+
+        <section id="page_final">
+            <div id="final-message-text"></div>
+        </section>
+    </div>
+
+    <script>
+        // Set Time-based Greeting
+        const hour = new Date().getHours();
+        let greet = "Hi, Happy Night! 🌌";
+        if (hour < 12) greet = "Hi, Happy Morning! ☀️";
+        else if (hour < 17) greet = "Hi, Happy Afternoon! 🌤️";
+        else if (hour < 21) greet = "Hi, Happy Evening! 🌙";
+        document.getElementById('greeting-text').innerText = greet;
+
+        function showPage(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function openGift(type) {
+            const display = document.getElementById('gift-display');
+            const check = document.getElementById('happy-check-area');
+            
+            if(type === 'photo') display.innerText = "Check your gallery for our favorite memory! 📸";
+            if(type === 'song') display.innerText = "Playing: Vaa Senthalini... 🎵";
+            if(type === 'gift') display.innerText = "Look under your pillow! 🎁";
+            if(type === 'food') display.innerText = "Get ready for a candlelit dinner! 🍴";
+            
+            check.style.display = 'block';
+        }
+
+        function finalAnswer(isHappy) {
+            showPage('page_final');
+            const final = document.getElementById('final-message-text');
+            if(isHappy) {
+                final.innerHTML = `<h3>Thank you for choosing me as your life partner. Only after your entry, my life got a path and moving on in it. I'll forever love you as I always do. Happy Birthday. To my W-World, I-Intelligent, F-Faithfull, E-Elegant Boss Lady. I love you a lotzzzz. ❤️</h3>`;
+            } else {
+                final.innerText = "Sorry, Minimal Budget 😅";
+            }
+        }
+    </script>
+</body>
+</html>

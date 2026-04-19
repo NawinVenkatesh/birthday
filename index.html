@@ -2,209 +2,276 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Story of Us - Happy Birthday</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A Story of Us | Happy Birthday</title>
     <style>
         :root {
-            --love-red: #ff4d6d;
-            --soft-pink: #fff0f3;
-            --accent: #ff8fa3;
+            --love-red: #d63031;
+            --inland-blue: #0288d1;
+            --paper-cream: #fffcf2;
         }
 
+        /* RESET & BASE */
+        * { box-sizing: border-box; }
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Segoe UI', sans-serif;
-            overflow: hidden;
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%;
+            font-family: 'Segoe UI', serif;
+            overflow-x: hidden;
+            background: #fff0f3;
         }
 
-        /* MULTI-SCENE BACKGROUND */
+        /* 1. REALISTIC RESPONSIVE BACKGROUND */
         .bg-layer {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: -2;
-            background: linear-gradient(rgba(255,240,243,0.8), rgba(255,204,213,0.8)),
-                        url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1350&q=80'); /* Soft Romantic Base */
-            background-size: cover;
-        }
-
-        /* Scene Specific Icons/Visuals */
-        .scene-icon {
-            position: absolute;
-            opacity: 0.15;
             z-index: -1;
             pointer-events: none;
         }
 
-        /* CONTAINER */
-        .container {
-            position: relative;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 90%;
-            margin: auto;
-            top: 50%;
-            transform: translateY(-50%);
-            border: 1px solid white;
+        .map-pin {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pin-icon { font-size: 2rem; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); }
+        .pin-label { 
+            background: white; padding: 2px 8px; border-radius: 8px; 
+            font-size: 0.7rem; font-weight: bold; border: 1px solid var(--inland-blue);
         }
 
-        section { display: none; animation: slideUp 0.8s ease-out; }
+        /* 2. MAIN CONTAINER */
+        .viewport {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            width: 100%;
+            max-width: 500px; /* Limits size on desktop */
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        section { display: none; animation: fadeIn 0.6s ease; }
         .active { display: block; }
 
-        /* TYPOGRAPHY & BUTTONS */
-        h1 { color: var(--love-red); font-size: 1.5rem; }
-        button {
-            background: var(--love-red); color: white; border: none;
-            padding: 12px 20px; margin: 8px; border-radius: 50px;
-            cursor: pointer; font-weight: bold; transition: 0.3s;
-        }
-        button:hover { transform: scale(1.05); background: #c9184a; }
-        button.clicked { background: #9e9e9e; opacity: 0.7; }
-        .back-btn { background: #ffccd5; color: #5c0a1a; }
-
-        /* ENVELOPE */
-        .envelope-wrapper {
-            position: relative; width: 200px; height: 140px;
-            background: #0288d1; margin: 20px auto; cursor: pointer;
+        /* 3. REALISTIC ENVELOPE */
+        .envelope {
+            position: relative;
+            width: 260px; height: 170px;
+            background: var(--inland-blue);
+            margin: 40px auto;
+            cursor: pointer;
+            transition: all 0.8s ease;
         }
         .flap {
             position: absolute; top: 0; left: 0;
-            border-left: 100px solid transparent; border-right: 100px solid transparent;
-            border-top: 80px solid #03a9f4; transform-origin: top; transition: 0.5s; z-index: 3;
+            border-left: 130px solid transparent;
+            border-right: 130px solid transparent;
+            border-top: 90px solid #03a9f4;
+            transform-origin: top;
+            transition: 0.4s;
+            z-index: 3;
         }
-        .envelope-wrapper.open .flap { transform: rotateX(180deg); }
-        .letter {
-            position: absolute; bottom: 5px; left: 5px;
-            width: 190px; height: 130px; background: #e1f5fe;
-            padding: 10px; box-sizing: border-box; transition: 0.7s;
-            font-family: 'Courier New', monospace; font-size: 0.75rem; text-align: left;
+        .envelope.open .flap { transform: rotateX(180deg); }
+
+        .letter-paper {
+            position: absolute; bottom: 5px; left: 10px;
+            width: 240px; height: 150px;
+            background: var(--paper-cream);
+            padding: 15px;
+            transition: 0.6s;
+            z-index: 2;
+            border: 1px solid #ddd;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            overflow: hidden;
         }
-        .envelope-wrapper.open .letter { transform: translateY(-120px); height: 320px; z-index: 4; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow-y: auto;}
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Full Screen Expansion for Letter */
+        .letter-paper.expanded {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw; height: 80vh;
+            max-width: 450px;
+            z-index: 100;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+        }
 
-        /* DECORATIVE ELEMENTS */
-        .map-trace { font-size: 0.8rem; font-style: italic; color: #888; margin-bottom: 15px; }
+        /* Bank Vault Animation */
+        .envelope.vaulted {
+            transform: scale(0) translateY(500px) rotate(720deg);
+            opacity: 0;
+        }
+
+        /* 4. BUTTON STYLES */
+        button {
+            background: var(--love-red);
+            color: white; border: none;
+            padding: 12px 24px; margin: 10px;
+            border-radius: 50px; cursor: pointer;
+            font-weight: bold; transition: 0.3s;
+            width: 80%;
+        }
+        button:hover { transform: scale(1.05); background: #b32626; }
+        .gift-btn { background: var(--accent, #ff8fa3); color: #5c0a1a; }
+        .gift-btn.clicked { background: #ccc; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="bg-layer"></div>
+    <div class="bg-layer">
+        <div class="map-pin" style="top: 10%; left: 15%;"><span class="pin-icon">📍</span><span class="pin-label">Erode</span></div>
+        <div class="map-pin" style="top: 25%; left: 50%;"><span class="pin-icon">📍</span><span class="pin-label">Coimbatore</span></div>
+        <div class="map-pin" style="bottom: 15%; right: 10%;"><span class="pin-icon">📍</span><span class="pin-label">Trichy & Tanjore</span></div>
+        <div style="position:absolute; bottom:5%; left:5%; font-size:2rem; opacity:0.3;">💻👨‍💻👩‍💻</div>
+    </div>
 
-    <div class="scene-icon" style="top:10%; left:10%; font-size: 4rem;">💻🏢</div> <div class="scene-icon" style="bottom:10%; right:10%; font-size: 4rem;">🚂🗺️</div> <div class="scene-icon" style="top:50%; left:5%; font-size: 3rem;">📍Coimbatore</div>
-    <div class="scene-icon" style="top:55%; left:15%; font-size: 3rem;">📍Erode</div>
+    <div class="viewport">
+        <div class="card">
+            
+            <section id="step1" class="active">
+                <h2 id="time-greet">Hi!</h2>
+                <p>Ready for your surprise? ❤️</p>
+                <button onclick="showNext('step2')">Yes</button>
+                <button onclick="showNext('step_no')">No</button>
+            </section>
 
-    <div class="container">
-        <section id="page1" class="active">
-            <h1 id="greeting-text">Hi!</h1>
-            <p>Ready for your surprise, my love? ❤️</p>
-            <button onclick="showPage('page_yes')">Yes</button>
-            <button onclick="showPage('page_no')">No</button>
-        </section>
+            <section id="step_no">
+                <h3>You missed a great surprise 😔</h3>
+                <p>Think well and choose Love</p>
+                <button onclick="showNext('step1')">Back to Yes</button>
+            </section>
 
-        <section id="page_no">
-            <h1>You missed a great surprise 😔</h1>
-            <p style="color: var(--love-red);">Think well and choose Love</p>
-            <button class="back-btn" onclick="showPage('page1')">← Back to Yes</button>
-        </section>
+            <section id="step2">
+                <h3>Ready to get amused! ✨</h3>
+                <button onclick="showNext('step3')">I'm Ready</button>
+            </section>
 
-        <section id="page_yes">
-            <h1>Ready to get amused! ✨</h1>
-            <p class="map-trace">From Erode to Coimbatore... our journey continues.</p>
-            <button onclick="showPage('page_envelope')">Ready</button>
-        </section>
-
-        <section id="page_envelope">
-            <div class="envelope-wrapper" id="envelope" onclick="this.classList.add('open')">
-                <div class="flap"></div>
-                <div class="letter">
-                    <p><strong>Ente Dearest Wife-nu,</strong></p>
-                    <p>Happy Birthday! Innu ninte special day aanu.</p>
-                    <p>Coimbatore Infosys-il vechu nammal meet cheythathum, aa Trichy-Tanjore train trip-um eppozhum ente manassil undu.</p>
-                    <p>Nee ente life-ilekk vanna sheshamaanu ellaathinum oru path kitiyathu. I love you a lotzzzz. ❤️</p>
+            <section id="step3">
+                <p>Click the letter to open it</p>
+                <div class="envelope" id="env" onclick="handleLetter()">
+                    <div class="flap"></div>
+                    <div class="letter-paper" id="paper">
+                        <div id="msg" style="display:none;">
+                            <strong>Ente Dearest Wife-nu,</strong><br><br>
+                            Happy Birthday! Innu ninte special day aanu. Coimbatore Infosys-il vechu meet cheythathum, aa Trichy-Tanjore trip-um okke treasure pole undu.<br><br>
+                            Nee ente life-ilekk vanna sheshamaanu ellaathinum oru path kitiyathu. I will forever love you. ❤️
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <button onclick="showPage('page_gifts')" style="margin-top: 150px;">Explore Gifts ❤️</button>
-        </section>
+                
+                <div id="reserve-ui" style="display:none;">
+                    <p>Can I reserve this letter for you?</p>
+                    <button onclick="reserve(true)">Yes</button>
+                    <button onclick="reserve(false)">No</button>
+                </div>
+            </section>
 
-        <section id="page_gifts">
-            <h1>Our Journey & Gifts</h1>
-            <div id="gift-menu">
-                <p>Click and see every gift! ✨</p>
-                <button id="btn-photo" onclick="showGift('A memory captured from our trips! 📸', 'photo')">🖼️ Photo</button>
-                <button id="btn-song" onclick="showGift('Our favorite: Vaa Senthalini... 🎵', 'song')">🎵 Song</button>
-                <button id="btn-gift" onclick="showGift('Look closely, a gift is near! 🎁', 'gift')">🎁 Gift</button>
-                <button id="btn-food" onclick="showGift('Our next food date is coming soon! 🍴', 'food')">🍴 Date</button>
-            </div>
+            <section id="step4">
+                <h3>Choose your gifts:</h3>
+                <div id="gift-grid">
+                    <button class="gift-btn" id="g1" onclick="tapGift('g1', '📸 Look in your gallery!')">🖼️ Photo</button>
+                    <button class="gift-btn" id="g2" onclick="tapGift('g2', '🎵 Playing: Vaa Senthalini...')">🎵 Song</button>
+                    <button class="gift-btn" id="g3" onclick="tapGift('g3', '🎁 Look in my hands!')">🎁 Gift</button>
+                    <button class="gift-btn" id="g4" onclick="tapGift('g4', '🍴 Our Food Date is ready!')">🍴 Date</button>
+                </div>
+                <div id="gift-result" style="margin-top:20px; font-weight:bold; color:var(--love-red);"></div>
+                
+                <div id="happy-check" style="display:none; margin-top:20px;">
+                    <p>Are you happy with these?</p>
+                    <button onclick="showNext('step5')">Yes</button>
+                    <button onclick="showNext('step_budget')">No</button>
+                </div>
+            </section>
 
-            <div id="gift-view" style="display:none; margin-top: 20px;">
-                <h2 id="gift-text"></h2>
-                <button class="back-btn" onclick="backToGifts()">← Back to see others</button>
-            </div>
+            <section id="step_budget">
+                <p>Sorry, Minimal Budget 😅</p>
+                <button onclick="showNext('step4')">Try Again</button>
+            </section>
 
-            <div id="happy-check" style="display:none; margin-top: 20px; border-top: 2px solid #ffccd5; padding-top: 15px;">
-                <p><strong>Are you happy with all these?</strong></p>
-                <button onclick="finalAnswer(true)">Yes!</button>
-                <button onclick="finalAnswer(false)">No</button>
-            </div>
-        </section>
+            <section id="step5">
+                <p>Thank you for choosing me as your life partner. Only after your entry, my life got a path. I'll forever love you.</p>
+                <h2 style="color:var(--love-red);">
+                    Bye as a Fiance for now,<br>
+                    Your next birthday would be as my wife.<br>
+                    Happy Bachelorette Birthday Love! 💍❤️
+                </h2>
+            </section>
 
-        <section id="page_final">
-            <div id="final-message"></div>
-            <br>
-            <h2 style="color:var(--love-red); line-height: 1.5;">Bye as a Fiance for now,<br>Your next birthday would be as my wife.<br>So, Happy Bachelorette Birthday Love! 💍❤️</h2>
-        </section>
+        </div>
     </div>
 
     <script>
-        // Track explored gifts
-        let explored = { photo: false, song: false, gift: false, food: false };
+        let letterStep = 0;
+        let explored = 0;
 
-        const hour = new Date().getHours();
-        let greet = "Hi, Happy Night! 🌌";
-        if (hour < 12) greet = "Hi, Happy Morning! ☀️";
-        else if (hour < 17) greet = "Hi, Happy Afternoon! 🌤️";
-        else if (hour < 21) greet = "Hi, Happy Evening! 🌙";
-        document.getElementById('greeting-text').innerText = greet;
+        // 1. Time Greeting
+        const h = new Date().getHours();
+        const greet = h<12?"Morning":h<17?"Afternoon":h<21?"Evening":"Night";
+        document.getElementById('time-greet').innerText = "Hi, Happy " + greet + "!";
 
-        function showPage(id) {
+        function showNext(id) {
             document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        function showGift(msg, key) {
-            explored[key] = true;
-            document.getElementById('btn-' + key).classList.add('clicked');
-            document.getElementById('gift-menu').style.display = 'none';
-            document.getElementById('gift-view').style.display = 'block';
-            document.getElementById('gift-text').innerText = msg;
-            
-            // Check if all are explored
-            if (Object.values(explored).every(val => val === true)) {
-                document.getElementById('happy-check').style.display = 'block';
+        function handleLetter() {
+            const env = document.getElementById('env');
+            const paper = document.getElementById('paper');
+            if(letterStep === 0) {
+                env.classList.add('open');
+                letterStep = 1;
+            } else if(letterStep === 1) {
+                paper.classList.add('expanded');
+                document.getElementById('msg').style.display = 'block';
+                document.getElementById('reserve-ui').style.display = 'block';
             }
         }
 
-        function backToGifts() {
-            document.getElementById('gift-menu').style.display = 'block';
-            document.getElementById('gift-view').style.display = 'none';
-        }
-
-        function finalAnswer(isHappy) {
-            if(isHappy) {
-                showPage('page_final');
-                document.getElementById('final-message').innerHTML = `
-                    <p>Thank you for choosing me as your life partner. Only after your entry, my life got a path. I'll forever love you. Happy Birthday to my W-I-F-E Boss Lady.</p>
-                `;
+        function reserve(yes) {
+            const env = document.getElementById('env');
+            const paper = document.getElementById('paper');
+            if(yes) {
+                paper.classList.remove('expanded');
+                setTimeout(() => {
+                    env.classList.remove('open');
+                    setTimeout(() => {
+                        env.classList.add('vaulted');
+                        alert("Safely stored in our Bank! 🏛️");
+                        showNext('step4');
+                    }, 600);
+                }, 600);
             } else {
-                alert("Sorry, Minimal Budget 😅");
+                showNext('step4');
             }
+        }
+
+        function tapGift(id, msg) {
+            const btn = document.getElementById(id);
+            if(!btn.classList.contains('clicked')) {
+                btn.classList.add('clicked');
+                explored++;
+            }
+            document.getElementById('gift-result').innerText = msg;
+            if(explored === 4) document.getElementById('happy-check').style.display = 'block';
         }
     </script>
 </body>

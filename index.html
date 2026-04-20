@@ -58,6 +58,254 @@
         
         .envelope-body { 
             position: absolute; width: 100%; height: 100%; 
+            background: #b33939; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+            display: flex; justify-content: center; align-items: flex-end;
+            z-index: 3; padding-bottom: 25px; border-radius: 5px;
+            border: 1px solid var(--gold);
+        }
+        
+        .envelope-label { color: var(--gold); font-style: italic; font-size: 1.1rem; text-shadow: 1px 1px 1px black; }
+
+        .flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 0;
+            border-left: 140px solid transparent; border-right: 140px solid transparent;
+            border-top: 110px solid #8e2e2e; transform-origin: top; transition: 0.6s; z-index: 4;
+        }
+        .open .flap { transform: rotateX(180deg); z-index: 1; }
+
+        .letter {
+            position: absolute; bottom: 5px; left: 15px; width: 250px; height: 150px;
+            background: var(--parchment); border: 1px solid #d4af37;
+            z-index: 2; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px; display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .letter.pop-out { 
+            transform: translateY(-50%) scale(1.1); 
+            top: 50%; left: 50%; margin-left: -160px; 
+            height: 440px; z-index: 20; width: 320px; 
+        }
+
+        .letter-content { opacity: 0; transition: 0.4s; }
+        .letter.pop-out .letter-content { opacity: 1; }
+
+        /* BUTTONS */
+        button {
+            background: var(--love-red); color: white; border: none; padding: 14px 20px;
+            margin: 10px auto; border-radius: 50px; cursor: pointer; font-weight: bold; width: 85%;
+            transition: 0.3s;
+        }
+        .gift-btn { width: 46%; display: inline-block; margin: 1%; background: var(--deep-rose); font-size: 0.85rem; }
+        .choice-btn { width: 40%; display: inline-block; margin: 5px; padding: 10px; }
+
+        /* PHOTO DISPLAY SIZE REDUCED */
+        #photo-container { display: none; }
+        .memory-img { 
+            width: 70%; /* Reduced size */
+            max-width: 250px;
+            border-radius: 20px; 
+            border: 5px solid white; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 10px auto;
+        }
+
+        #video-container { display: none; margin-top: 10px; }
+        video { width: 100%; border-radius: 20px; border: 3px solid white; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <audio id="bg_music" loop><source src="music1.mp3" type="audio/mpeg"></audio>
+
+    <div class="bg-layer" id="heart-bg"></div>
+
+    <div class="card">
+        <section id="step1" class="active">
+            <h2 style="color: var(--deep-rose);">Hello Beautiful! ❤️</h2>
+            <p>Ready to explore your surprise?</p>
+            <button onclick="startExperience()">Yes, my love</button>
+            <button onclick="showPage('step_no')">No</button>
+        </section>
+
+        <section id="step_no">
+            <h3>Don't break my heart! 🥺</h3>
+            <button onclick="showPage('step1')">Actually, Yes!</button>
+        </section>
+
+        <section id="step3">
+            <p id="instruction" style="color: var(--deep-rose); font-weight: bold;">Click the cover to see my heart...</p>
+            <div class="envelope-wrapper" id="env-wrap" onclick="handleLetterFlow()">
+                <div class="flap" id="flap"></div>
+                <div class="envelope-body">
+                    <div class="envelope-label">To my Love, With Love</div>
+                </div>
+                <div class="letter" id="letter">
+                    <div class="letter-content" id="letter-text">
+                        <div style="color:var(--love-red); font-size: 1.5rem;">❦</div>
+                        <p><strong>Ente Dearest Wife-nu,</strong></p>
+                        <p style="font-size: 0.95rem; line-height: 1.6;">Happy Birthday! Coimbatore-il meet cheythathum, nammude travel memories-um eppozhum treasure pole undu.</p>
+                        <p>I will forever love you. ❤️</p>
+                        
+                        <div id="reservation-ui">
+                            <p style="font-size: 0.85rem; color: #666;">Reserve this letter?</p>
+                            <button class="choice-btn" onclick="confirmReserve(event, true)">Yes</button>
+                            <button class="choice-btn" onclick="confirmReserve(event, false)">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="move-consent" style="display:none;">
+                <h3 style="color: var(--deep-rose);">Ready for your gifts? ✨</h3>
+                <button class="choice-btn" onclick="showPage('step4')">Yes</button>
+                <button class="choice-btn" onclick="alert('Take your time ❤️')">No</button>
+            </div>
+        </section>
+
+        <section id="step4">
+            <div id="gift-main-ui">
+                <h3 style="color: var(--deep-rose);">Select a Gift</h3>
+                <div id="gift-grid">
+                    <button class="gift-btn" onclick="giftTap('photo')">🖼️ Memory</button>
+                    <button class="gift-btn" onclick="giftTap('song')">🎵 Our Song</button>
+                    <button class="gift-btn" onclick="giftTap('gift')">🎁 Surprise</button>
+                    <button class="gift-btn" onclick="giftTap('food')">🍴 Date</button>
+                </div>
+                <p id="gift-info" style="color:var(--deep-rose); font-weight:bold; margin-top:15px; font-size: 0.9rem;"></p>
+                <button id="final-btn" style="display:none;" onclick="showPage('step5')">You make me so happy! ❤️</button>
+            </div>
+
+            <div id="photo-container">
+                <img src="image1.jpeg" class="memory-img">
+                <p style="font-weight: bold; color: var(--deep-rose);">📸 Our Special Memory!</p>
+                <button style="background:#555; width:auto; font-size: 0.8rem;" onclick="backToGiftsFromPhoto()">← Back to Gifts</button>
+            </div>
+
+            <div id="video-container">
+                <video id="song-video" controls onended="checkReplay()"><source src="songvideo1.mp4" type="video/mp4"></video>
+                <button style="background:#555; width:auto; font-size: 0.8rem;" onclick="backToGiftsFromVideo()">← Back to Gifts</button>
+                <div id="replay-controls" style="display:none; margin-top:10px;">
+                    <p>Wanna hear it again?</p>
+                    <button class="choice-btn" onclick="replayVideo()">Yes</button>
+                    <button class="choice-btn" onclick="backToGiftsFromVideo()">No</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="step5">
+            <img src="image2.jpeg" style="width: 100%; border-radius: 20px; margin-bottom: 20px;">
+            <p style="font-style: italic;">Only after your entry, my life got a path.</p>
+            <h2 style="color:var(--deep-rose);">Happy Bachelorette Birthday Love! 💍</h2>
+        </section>
+    </div>
+
+    <script>
+        let flow = 0, giftsVisited = new Set();
+        const bgMusic = document.getElementById("bg_music");
+        const video = document.getElementById("song-video");
+
+        function createHearts() {
+            const bg = document.getElementById('heart-bg');
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                bg.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        function showPage(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function startExperience() { bgMusic.play(); showPage('step3'); }
+
+        function handleLetterFlow() {
+            const wrap = document.getElementById('env-wrap'), letter = document.getElementById('letter'), instruct = document.getElementById('instruction');
+            if (flow === 0) { wrap.classList.add('open'); flow = 1; }
+            else if (flow === 1) { letter.classList.add('pop-out'); instruct.style.display = "none"; flow = 2; }
+        }
+
+        function confirmReserve(event, yes) {
+            event.stopPropagation();
+            const letter = document.getElementById('letter'), wrap = document.getElementById('env-wrap');
+            if (yes) {
+                document.getElementById('letter-text').style.opacity = "0"; 
+                setTimeout(() => {
+                    letter.classList.remove('pop-out');
+                    setTimeout(() => { wrap.classList.remove('open'); document.getElementById('move-consent').style.display = "block"; }, 800);
+                }, 400);
+            } else { document.getElementById('move-consent').style.display = "block"; }
+        }
+
+        function giftTap(type) {
+            const info = document.getElementById('gift-info'), mainUi = document.getElementById('gift-main-ui'), photoUi = document.getElementById('photo-container'), vidCon = document.getElementById('video-container');
+            giftsVisited.add(type);
+            
+            if (type === 'food') {
+                info.innerHTML = "Sunlight lunch for now!<br>Candlelight dinner soon after marriage. 🕯️";
+            } else if (type === 'photo') {
+                mainUi.style.display = "none";
+                photoUi.style.display = "block";
+            } else if (type === 'song') {
+                bgMusic.pause();
+                mainUi.style.display = "none";
+                vidCon.style.display = "block";
+                video.play();
+            } else {
+                info.innerText = "🎁 Something special for you.";
+            }
+            if (giftsVisited.size >= 4) document.getElementById('final-btn').style.display = "block";
+        }
+
+        function backToGiftsFromPhoto() {
+            document.getElementById('photo-container').style.display = "none";
+            document.getElementById('gift-main-ui').style.display = "block";
+        }
+
+        function backToGiftsFromVideo() {
+            video.pause();
+            document.getElementById('replay-controls').style.display = "none";
+            document.getElementById('video-container').style.display = "none";
+            document.getElementById('gift-main-ui').style.display = "block";
+            bgMusic.play();
+        }
+
+        function checkReplay() { document.getElementById('replay-controls').style.display = "block"; }
+        function replayVideo() { document.getElementById('replay-controls').style.display = "none"; video.currentTime = 0; video.play(); }
+    </script>
+</body>
+</html>
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* GLASS CARD CONTAINER */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            width: 95%; max-width: 450px;
+            padding: 30px; border-radius: 40px;
+            box-shadow: 0 25px 60px rgba(201, 24, 74, 0.2);
+            z-index: 10; border: 2px solid white;
+        }
+
+        section { display: none; animation: fadeIn 0.8s ease; }
+        .active { display: block; }
+
+        /* ROMANTIC RETRO ENVELOPE */
+        .envelope-wrapper { position: relative; width: 280px; height: 180px; margin: 40px auto; cursor: pointer; perspective: 1000px; }
+        
+        .envelope-body { 
+            position: absolute; width: 100%; height: 100%; 
             background: #b33939; /* Deep Crimson */
             box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
             display: flex; justify-content: center; align-items: flex-end;

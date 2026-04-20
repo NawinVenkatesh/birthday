@@ -69,9 +69,10 @@
         .letter-content { opacity: 0; transition: 0.3s; font-size: 0.9rem; color: #444; }
         .letter.pop-out .letter-content { opacity: 1; }
 
-        /* VIDEO MODAL */
+        /* VIDEO & IMAGES */
         #video-container { display: none; margin-top: 15px; }
         video { width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .display-img { width: 100%; border-radius: 15px; margin-top: 15px; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
         /* BUTTONS */
         button {
@@ -138,7 +139,7 @@
                     <button class="gift-btn" onclick="giftTap('gift')">🎁 Gift</button>
                     <button class="gift-btn" onclick="giftTap('food')">🍴 Date</button>
                 </div>
-                <img id="gift-image" src="image1.jpg" style="display:none; width:100%; border-radius:15px; margin-top:10px;">
+                <img id="gift-image" src="image1.jpeg" class="display-img">
                 <p id="gift-info" style="color:var(--love-red); font-weight:bold; margin-top: 15px;"></p>
                 <button id="final-btn" style="display:none;" onclick="showPage('step5')">Are you happy? ❤️</button>
             </div>
@@ -146,7 +147,6 @@
             <div id="video-container">
                 <video id="song-video" onended="checkReplay()">
                     <source src="songvideo1.mp4" type="video/mp4">
-                    Your browser does not support video.
                 </video>
                 <div id="replay-controls" style="display:none;">
                     <p>Do you want to hear it again?</p>
@@ -157,14 +157,14 @@
         </section>
 
         <section id="step5">
+            <img src="image2.jpeg" style="width: 100%; border-radius: 15px; margin-bottom: 15px;">
             <p>Only after your entry, my life got a path. I'll forever love you.</p>
             <h2 style="color:var(--love-red);">Happy Bachelorette Birthday Love! 💍</h2>
         </section>
     </div>
 
     <script>
-        let flow = 0;
-        let giftsVisited = new Set();
+        let flow = 0, giftsVisited = new Set();
         const bgMusic = document.getElementById("bg_music");
         const video = document.getElementById("song-video");
 
@@ -179,88 +179,43 @@
         }
 
         function handleLetterFlow() {
-            const wrap = document.getElementById('env-wrap');
-            const letter = document.getElementById('letter');
-            const instruct = document.getElementById('instruction');
-
-            if (flow === 0) {
-                wrap.classList.add('open');
-                instruct.innerText = "Click the cover to pop the letter";
-                flow = 1;
-            } else if (flow === 1) {
-                letter.classList.add('pop-out');
-                instruct.style.display = "none";
-                flow = 2;
-            }
+            const wrap = document.getElementById('env-wrap'), letter = document.getElementById('letter'), instruct = document.getElementById('instruction');
+            if (flow === 0) { wrap.classList.add('open'); instruct.innerText = "Click the cover to pop the letter"; flow = 1; }
+            else if (flow === 1) { letter.classList.add('pop-out'); instruct.style.display = "none"; flow = 2; }
         }
 
-        function askReserve(e) {
-            e.stopPropagation();
-            document.getElementById('reserve-confirm').style.display = "block";
-        }
+        function askReserve(e) { e.stopPropagation(); document.getElementById('reserve-confirm').style.display = "block"; }
 
         function confirmReserve(yes) {
-            const letter = document.getElementById('letter');
-            const letterText = document.getElementById('letter-text');
-            const wrap = document.getElementById('env-wrap');
-
+            const letter = document.getElementById('letter'), letterText = document.getElementById('letter-text'), wrap = document.getElementById('env-wrap');
             if (yes) {
                 letterText.style.opacity = "0"; 
                 setTimeout(() => {
                     letter.classList.remove('pop-out');
-                    setTimeout(() => {
-                        wrap.classList.remove('open');
-                        alert("Letter Reserved! 🏛️");
-                        showPage('step4');
-                    }, 800);
+                    setTimeout(() => { wrap.classList.remove('open'); alert("Letter Reserved! 🏛️"); showPage('step4'); }, 800);
                 }, 400);
-            } else {
-                showPage('step4');
-            }
+            } else { showPage('step4'); }
         }
 
         function giftTap(type) {
-            const info = document.getElementById('gift-info');
-            const img = document.getElementById('gift-image');
-            const mainUi = document.getElementById('gift-main-ui');
-            const vidCon = document.getElementById('video-container');
-
+            const info = document.getElementById('gift-info'), img = document.getElementById('gift-image'), mainUi = document.getElementById('gift-main-ui'), vidCon = document.getElementById('video-container');
             giftsVisited.add(type);
             img.style.display = "none";
 
-            if (type === 'food') {
-                info.innerHTML = "Due to time constraints, I cannot take you to the candlelight dinner for now. So, let it be a sunlight lunch for now.<br><br>But we'll definitely have a candlelight dinner soon after marriage.";
-            } else if (type === 'photo') {
-                img.style.display = "block";
-                info.innerText = "📸 Our Special Memory!";
-            } else if (type === 'song') {
-                bgMusic.pause();
-                mainUi.style.display = "none";
-                vidCon.style.display = "block";
-                video.play();
-            } else {
-                info.innerText = "🎁 A gift for you!";
-            }
+            if (type === 'food') info.innerHTML = "Due to time constraints, I cannot take you to the candlelight dinner for now. So, let it be a sunlight lunch for now.<br><br>But we'll definitely have a candlelight dinner soon after marriage.";
+            else if (type === 'photo') { img.style.display = "block"; info.innerText = "📸 Our Special Memory!"; }
+            else if (type === 'song') { bgMusic.pause(); mainUi.style.display = "none"; vidCon.style.display = "block"; video.play(); }
+            else info.innerText = "🎁 A gift for you!";
 
             if (giftsVisited.size >= 4) document.getElementById('final-btn').style.display = "block";
         }
 
-        function checkReplay() {
-            document.getElementById('replay-controls').style.display = "block";
-        }
+        function checkReplay() { document.getElementById('replay-controls').style.display = "block"; }
+        function replayVideo() { document.getElementById('replay-controls').style.display = "none"; video.currentTime = 0; video.play(); }
+        function backToGifts() { document.getElementById('replay-controls').style.display = "none"; document.getElementById('video-container').style.display = "none"; document.getElementById('gift-main-ui').style.display = "block"; bgMusic.play(); }
 
-        function replayVideo() {
-            document.getElementById('replay-controls').style.display = "none";
-            video.currentTime = 0;
-            video.play();
-        }
-
-        function backToGifts() {
-            document.getElementById('replay-controls').style.display = "none";
-            document.getElementById('video-container').style.display = "none";
-            document.getElementById('gift-main-ui').style.display = "block";
-            bgMusic.play();
-        }
+        const h = new Date().getHours();
+        document.getElementById('time-greet').innerText = "Hi, Happy " + (h<12?"Morning":h<17?"Afternoon":h<21?"Evening":"Night") + "!";
     </script>
 </body>
 </html>

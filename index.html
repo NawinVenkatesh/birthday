@@ -7,53 +7,61 @@
     <style>
         :root {
             --love-red: #d63031;
-            --inland-blue: #0288d1;
+            --retro-tan: #d2b48c;
             --parchment: #fcf5e5;
             --romantic-pink: #ff8fa3;
+            --deep-maroon: #800000;
         }
 
         /* FULL SCREEN CENTER ALIGNMENT */
         * { box-sizing: border-box; text-align: center; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Georgia', serif;
             overflow: hidden; background: #fff0f3;
             display: flex; justify-content: center; align-items: center;
         }
 
         .bg-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; background: linear-gradient(135deg, #fff0f3 0%, #ffdde1 100%);
+            z-index: -1; background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(10px);
             width: 95%; max-width: 450px;
-            padding: 25px; border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            z-index: 10;
+            padding: 25px; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            z-index: 10; border: 1px solid #d2b48c;
         }
 
         section { display: none; animation: fadeIn 0.6s ease; }
         .active { display: block; }
 
-        /* ENVELOPE MECHANICS */
-        .envelope-wrapper { position: relative; width: 280px; height: 180px; margin: 30px auto; cursor: pointer; perspective: 1000px; }
+        /* RETRO ENVELOPE MECHANICS */
+        .envelope-wrapper { position: relative; width: 280px; height: 180px; margin: 40px auto; cursor: pointer; perspective: 1000px; }
         
         .envelope-body { 
             position: absolute; width: 100%; height: 100%; 
-            background: var(--inland-blue); box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
-            display: flex; justify-content: center; align-items: center;
-            z-index: 3; /* Body is above the hidden letter */
+            background: var(--retro-tan); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            display: flex; justify-content: center; align-items: flex-end; /* Lowered text */
+            z-index: 3; padding-bottom: 20px;
+            border: 2px solid #b8860b;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
         }
         
-        .envelope-label { color: white; font-family: 'Georgia', serif; font-style: italic; font-size: 1rem; }
+        .envelope-label { 
+            color: var(--deep-maroon); font-style: italic; font-size: 1rem; 
+            font-weight: bold; border-bottom: 1px solid var(--deep-maroon);
+            margin-bottom: 10px;
+        }
 
         .flap {
             position: absolute; top: 0; left: 0; width: 100%; height: 0;
             border-left: 140px solid transparent; border-right: 140px solid transparent;
-            border-top: 100px solid #03a9f4; transform-origin: top; transition: 0.6s; z-index: 4;
+            border-top: 100px solid #bc8f8f; transform-origin: top; transition: 0.6s; z-index: 4;
         }
         .open .flap { transform: rotateX(180deg); z-index: 1; }
 
@@ -61,35 +69,33 @@
         .letter {
             position: absolute; bottom: 5px; left: 15px; width: 250px; height: 150px;
             background: var(--parchment); border: 1px solid #e0cda9;
-            z-index: 2; /* Hidden behind envelope body initially */
-            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 20px; display: flex; flex-direction: column; justify-content: center;
-            border-radius: 5px;
-            background-image: radial-gradient(#f9d8d8 1px, transparent 1px);
-            background-size: 20px 20px;
+            z-index: 2; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 25px; display: flex; flex-direction: column; justify-content: center;
+            border-radius: 5px; box-shadow: inset 0 0 15px rgba(210,180,140,0.3);
         }
 
+        /* Letter covers everything when popped */
         .letter.pop-out { 
-            transform: translateY(-150px); 
-            height: 380px; z-index: 5; width: 320px; left: -20px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            border: 2px solid #d63031;
+            transform: translateY(-50%) scale(1.1); 
+            top: 50%; left: 50%; margin-left: -150px; /* Centered over envelope */
+            height: 420px; z-index: 20; width: 300px; 
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            border: 2px solid var(--deep-maroon);
         }
 
-        .letter-content { opacity: 0; transition: 0.3s; font-family: 'Georgia', serif; }
+        .letter-content { opacity: 0; transition: 0.3s; color: #333; }
         .letter.pop-out .letter-content { opacity: 1; }
 
-        /* VIDEO */
+        /* VIDEO & BUTTONS */
         #video-container { display: none; margin-top: 10px; }
         video { width: 100%; border-radius: 15px; }
 
-        /* BUTTONS */
         button {
-            background: var(--love-red); color: white; border: none; padding: 12px 20px;
-            margin: 10px auto; border-radius: 50px; cursor: pointer; font-weight: bold; width: 85%;
+            background: var(--deep-maroon); color: white; border: none; padding: 12px 20px;
+            margin: 10px auto; border-radius: 5px; cursor: pointer; font-weight: bold; width: 85%;
         }
-        .gift-btn { width: 46%; display: inline-block; margin: 1%; background: var(--romantic-pink); }
-        .nav-btn { background: #555; width: auto; padding: 8px 15px; font-size: 0.8rem; }
+        .gift-btn { width: 46%; display: inline-block; margin: 1%; background: #a0522d; }
+        .consent-btn { width: 40%; display: inline-block; margin: 5px; background: var(--love-red); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -102,7 +108,7 @@
 
     <div class="card">
         <section id="step1" class="active">
-            <h2 id="time-greet">Hi!</h2>
+            <h2>Hi!</h2>
             <p>Ready for your surprise, my love? ❤️</p>
             <button onclick="startExperience()">Yes</button>
             <button onclick="showPage('step_no')">No</button>
@@ -122,19 +128,25 @@
                 </div>
                 <div class="letter" id="letter">
                     <div class="letter-content" id="letter-text">
-                        <div style="color:red; font-size: 1.5rem;">❦</div>
+                        <div style="color:var(--deep-maroon); font-size: 1.5rem;">❦</div>
                         <p><strong>Ente Dearest Wife-nu,</strong></p>
-                        <p style="font-size: 0.9rem; line-height: 1.4;">Happy Birthday! Coimbatore-il meet cheythathum, nammude travel memories-um eppozhum treasure pole undu.</p>
+                        <p style="font-size: 0.9rem; line-height: 1.5;">Happy Birthday! Coimbatore-il meet cheythathum, nammude travel memories-um eppozhum treasure pole undu.</p>
                         <p style="font-size: 0.9rem;">I will forever love you as I always do. ❤️</p>
-                        <button style="font-size: 0.8rem; width: auto; background: var(--romantic-pink);" onclick="askReserve(event)">Reserve this letter?</button>
+                        <button style="font-size: 0.8rem; width: auto;" onclick="askReserve(event)">Reserve this letter?</button>
                     </div>
                 </div>
             </div>
 
             <div id="reserve-confirm" style="display:none;">
                 <p>Keep this safe in the vault?</p>
-                <button style="display:inline-block; width: 40%;" onclick="confirmReserve(true)">Yes</button>
-                <button style="display:inline-block; width: 40%;" onclick="confirmReserve(false)">No</button>
+                <button class="consent-btn" onclick="confirmReserve(true)">Yes</button>
+                <button class="consent-btn" onclick="confirmReserve(false)">No</button>
+            </div>
+
+            <div id="move-consent" style="display:none; margin-top: 20px;">
+                <p>Shall we move to the next page? ✨</p>
+                <button class="consent-btn" onclick="showPage('step4')">Yes</button>
+                <button class="consent-btn" onclick="stayHere()">No</button>
             </div>
         </section>
 
@@ -156,17 +168,17 @@
                 <video id="song-video" controls onended="checkReplay()">
                     <source src="songvideo1.mp4" type="video/mp4">
                 </video>
-                <button class="nav-btn" onclick="backToGifts()">← Back to Gifts</button>
+                <button style="background:#555; width:auto; margin-top:10px;" onclick="backToGifts()">← Back to Gifts</button>
                 <div id="replay-controls" style="display:none; margin-top:10px;">
                     <p>Do you wanna hear again?</p>
-                    <button style="display:inline-block; width: 40%;" onclick="replayVideo()">Yes</button>
-                    <button style="display:inline-block; width: 40%;" onclick="backToGifts()">No</button>
+                    <button class="consent-btn" onclick="replayVideo()">Yes</button>
+                    <button class="consent-btn" onclick="backToGifts()">No</button>
                 </div>
             </div>
         </section>
 
         <section id="step5">
-            <img src="image2.jpeg" style="width: 100%; border-radius: 15px; margin-bottom: 15px;">
+            <img src="image2.jpeg" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
             <p>Only after your entry, my life got a path. I'll forever love you.</p>
             <h2 style="color:var(--love-red); font-size: 1.2rem;">Happy Bachelorette Birthday Love! 💍</h2>
         </section>
@@ -182,18 +194,11 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function startExperience() {
-            bgMusic.play();
-            showPage('step3');
-        }
+        function startExperience() { bgMusic.play(); showPage('step3'); }
 
         function handleLetterFlow() {
             const wrap = document.getElementById('env-wrap'), letter = document.getElementById('letter'), instruct = document.getElementById('instruction');
-            if (flow === 0) { 
-                wrap.classList.add('open'); 
-                instruct.innerText = "Click the cover to pop the letter"; 
-                flow = 1; 
-            }
+            if (flow === 0) { wrap.classList.add('open'); flow = 1; }
             else if (flow === 1) { 
                 letter.classList.add('pop-out'); 
                 instruct.style.display = "none"; 
@@ -205,19 +210,24 @@
 
         function confirmReserve(yes) {
             const letter = document.getElementById('letter'), letterText = document.getElementById('letter-text'), wrap = document.getElementById('env-wrap');
+            document.getElementById('reserve-confirm').style.display = "none";
             if (yes) {
                 letterText.style.opacity = "0"; 
                 setTimeout(() => {
                     letter.classList.remove('pop-out');
-                    setTimeout(() => { wrap.classList.remove('open'); alert("Letter Reserved! 🏛️"); showPage('step4'); }, 800);
+                    setTimeout(() => { 
+                        wrap.classList.remove('open'); 
+                        document.getElementById('move-consent').style.display = "block";
+                    }, 800);
                 }, 400);
-            } else { showPage('step4'); }
+            } else { document.getElementById('move-consent').style.display = "block"; }
         }
+
+        function stayHere() { alert("Take your time to feel the love! Click 'Yes' when you're ready."); }
 
         function giftTap(type) {
             const info = document.getElementById('gift-info'), img = document.getElementById('gift-image'), mainUi = document.getElementById('gift-main-ui'), vidCon = document.getElementById('video-container');
-            giftsVisited.add(type);
-            img.style.display = "none";
+            giftsVisited.add(type); img.style.display = "none";
             if (type === 'food') info.innerHTML = "Due to time constraints, I cannot take you to the candlelight dinner for now. So, let it be a sunlight lunch for now.<br><br>But we'll definitely have a candlelight dinner soon after marriage.";
             else if (type === 'photo') { img.style.display = "block"; info.innerText = "📸 Our Special Memory!"; }
             else if (type === 'song') { bgMusic.pause(); mainUi.style.display = "none"; vidCon.style.display = "block"; video.play(); }
@@ -227,17 +237,7 @@
 
         function checkReplay() { document.getElementById('replay-controls').style.display = "block"; }
         function replayVideo() { document.getElementById('replay-controls').style.display = "none"; video.currentTime = 0; video.play(); }
-        
-        function backToGifts() { 
-            video.pause();
-            document.getElementById('replay-controls').style.display = "none"; 
-            document.getElementById('video-container').style.display = "none"; 
-            document.getElementById('gift-main-ui').style.display = "block"; 
-            bgMusic.play(); 
-        }
-
-        const h = new Date().getHours();
-        document.getElementById('time-greet').innerText = "Hi, Happy " + (h<12?"Morning":h<17?"Afternoon":h<21?"Evening":"Night") + "!";
+        function backToGifts() { video.pause(); document.getElementById('replay-controls').style.display = "none"; document.getElementById('video-container').style.display = "none"; document.getElementById('gift-main-ui').style.display = "block"; bgMusic.play(); }
     </script>
 </body>
 </html>

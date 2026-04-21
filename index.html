@@ -267,4 +267,237 @@
         }
     </script>
 </body>
+</html>        @keyframes float {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(15px);
+            width: 90%; max-width: 420px;
+            padding: 30px; border-radius: 40px;
+            box-shadow: 0 25px 60px rgba(201, 24, 74, 0.2);
+            z-index: 10; border: 2px solid white;
+        }
+
+        section { display: none; animation: fadeIn 0.8s ease; }
+        .active { display: block; }
+
+        /* ENVELOPE & LETTER MECHANICS */
+        .envelope-wrapper { position: relative; width: 280px; height: 180px; margin: 40px auto; perspective: 1000px; }
+        
+        .envelope-body { 
+            position: absolute; width: 100%; height: 100%; 
+            background: #b33939; z-index: 10; 
+            border-radius: 8px; border: 1px solid var(--gold);
+            display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px;
+        }
+        
+        .envelope-label { color: var(--gold); font-style: italic; font-size: 1rem; pointer-events: none; }
+
+        .flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 0;
+            border-left: 140px solid transparent; border-right: 140px solid transparent;
+            border-top: 110px solid #8e2e2e; transform-origin: top; transition: 0.6s; z-index: 11;
+            cursor: pointer;
+        }
+        .open .flap { transform: rotateX(180deg); z-index: 5; }
+
+        .letter {
+            position: absolute; bottom: 10px; left: 15px; width: 250px; height: 140px;
+            background: var(--parchment); border: 1px solid var(--gold);
+            z-index: 6; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px; border-radius: 5px; cursor: pointer;
+        }
+
+        /* Initial pop out when flap opens */
+        .open .letter { transform: translateY(-40px); }
+
+        /* Full expansion when letter is clicked */
+        .letter.expanded { 
+            transform: translateY(-50%) scale(1.1) !important; 
+            top: 50%; left: 50%; margin-left: -160px; 
+            height: 450px; z-index: 20; width: 320px; 
+            box-shadow: 0 0 100px rgba(0,0,0,0.4);
+            cursor: default;
+        }
+
+        .letter-content { opacity: 0; visibility: hidden; transition: 0.4s; }
+        .letter.expanded .letter-content { opacity: 1; visibility: visible; }
+
+        /* BUTTONS */
+        button {
+            background: var(--love-red); color: white; border: none; padding: 12px 20px;
+            margin: 10px auto; border-radius: 50px; cursor: pointer; font-weight: bold; width: 85%;
+        }
+        .close-btn { background: var(--deep-rose); width: auto; margin-top: 20px; }
+        .gift-btn { width: 46%; display: inline-block; margin: 1%; background: var(--deep-rose); }
+        .back-btn { background: #666; width: auto; font-size: 0.8rem; padding: 8px 15px; }
+
+        .memory-img { width: 75%; border-radius: 15px; border: 4px solid white; margin: 15px auto; }
+        video { width: 100%; border-radius: 15px; border: 3px solid white; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <audio id="bg_music" loop><source src="music1.mp3" type="audio/mpeg"></audio>
+    <div class="bg-layer" id="heart-bg"></div>
+
+    <div class="card">
+        <section id="step1" class="active">
+            <h2 style="color: var(--deep-rose); margin-bottom: 15px;">Hello Beautiful! ❤️</h2>
+            <p>I've prepared a little journey for your special day. Ready?</p>
+            <button onclick="startExperience()">Yes, my love</button>
+            <button onclick="showPage('step_no')">No</button>
+        </section>
+
+        <section id="step_no">
+            <h3>Try that again... 🥺</h3>
+            <button onclick="showPage('step1')">Actually, Yes!</button>
+        </section>
+
+        <section id="step3">
+            <p id="instruction" style="color: var(--deep-rose); font-weight: bold;">Click the flap to open...</p>
+            
+            <div class="envelope-wrapper" id="env-wrap">
+                <div class="flap" id="flap" onclick="openFlap()"></div>
+                <div class="envelope-body">
+                    <div class="envelope-label">To my Love, With Love</div>
+                </div>
+                <div class="letter" id="letter" onclick="expandLetter()">
+                    <div class="letter-content" id="letter-text">
+                        <div style="color:var(--love-red); font-size: 1.5rem; margin-bottom: 10px;">❦</div>
+                        <p><strong>Ente Dearest Wife-nu,</strong></p>
+                        <p style="font-size: 0.9rem; line-height: 1.5; margin: 15px 0;">Happy Birthday! Coimbatore-il meet cheythathum, nammude travel memories-um treasure pole undu.</p>
+                        <p>I will forever love you. ❤️</p>
+                        
+                        <button class="close-btn" onclick="closeAndNext(event)">Close Letter</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="move-consent" style="display:none;">
+                <h3 style="color: var(--deep-rose);">Ready for your surprises? ✨</h3>
+                <button style="width:45%; display:inline-block;" onclick="showPage('step4')">Yes</button>
+                <button style="width:45%; display:inline-block;" onclick="alert('Take your time ❤️')">No</button>
+            </div>
+        </section>
+
+        <section id="step4">
+            <div id="gift-main-ui">
+                <h3 style="color: var(--deep-rose); margin-bottom: 15px;">Pick a Gift</h3>
+                <div id="gift-grid">
+                    <button class="gift-btn" onclick="giftTap('photo')">🖼️ Memory</button>
+                    <button class="gift-btn" onclick="giftTap('song')">🎵 Our Song</button>
+                    <button class="gift-btn" onclick="giftTap('gift')">🎁 Surprise</button>
+                    <button class="gift-btn" onclick="giftTap('food')">🍴 Date</button>
+                </div>
+                <p id="gift-info" style="color:var(--deep-rose); font-weight:bold; margin-top:15px; font-size: 0.9rem;"></p>
+                <button id="final-btn" style="display:none;" onclick="showPage('step5')">You make me so happy! ❤️</button>
+            </div>
+
+            <div id="photo-container" style="display:none;">
+                <img src="image1.jpeg" class="memory-img">
+                <button class="back-btn" onclick="backToGifts()">← Back to Gifts</button>
+            </div>
+
+            <div id="video-container" style="display:none;">
+                <video id="song-video" controls><source src="songvideo1.mp4" type="video/mp4"></video>
+                <button class="back-btn" onclick="backToGifts()">← Back to Gifts</button>
+            </div>
+        </section>
+
+        <section id="step5">
+            <img src="image2.jpeg" style="width: 100%; border-radius: 20px; margin-bottom: 20px;">
+            <p style="font-style: italic;">Only after your entry, my life got a path.</p>
+            <h2 style="color:var(--deep-rose);">Happy Bachelorette Birthday Love! 💍</h2>
+        </section>
+    </div>
+
+    <script>
+        let giftsVisited = new Set();
+        const bgMusic = document.getElementById("bg_music");
+        const video = document.getElementById("song-video");
+
+        function createHearts() {
+            const bg = document.getElementById('heart-bg');
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                bg.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        function showPage(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function startExperience() { bgMusic.play(); showPage('step3'); }
+
+        // Step 1: Open the flap and pop letter slightly
+        function openFlap() {
+            document.getElementById('env-wrap').classList.add('open');
+            document.getElementById('instruction').innerText = "Click the letter to read it...";
+        }
+
+        // Step 2: Expand the letter when she clicks the paper
+        function expandLetter() {
+            const wrap = document.getElementById('env-wrap');
+            if(wrap.classList.contains('open')) {
+                document.getElementById('letter').classList.add('expanded');
+                document.getElementById('instruction').style.display = "none";
+            }
+        }
+
+        // Step 3: Close letter, fold it back, and show next question
+        function closeAndNext(event) {
+            event.stopPropagation(); // Prevents re-triggering expand
+            const letter = document.getElementById('letter');
+            const wrap = document.getElementById('env-wrap');
+            
+            // Hide text first
+            document.getElementById('letter-text').style.opacity = "0";
+            
+            setTimeout(() => {
+                // Shrink letter
+                letter.classList.remove('expanded');
+                setTimeout(() => {
+                    // Close flap
+                    wrap.classList.remove('open');
+                    setTimeout(() => {
+                        // Hide envelope and show consent
+                        wrap.style.display = "none";
+                        document.getElementById('move-consent').style.display = "block";
+                    }, 600);
+                }, 800);
+            }, 300);
+        }
+
+        function giftTap(type) {
+            const info = document.getElementById('gift-info'), mainUi = document.getElementById('gift-main-ui');
+            giftsVisited.add(type);
+            if (type === 'photo') { mainUi.style.display = "none"; document.getElementById('photo-container').style.display = "block"; }
+            else if (type === 'song') { bgMusic.pause(); mainUi.style.display = "none"; document.getElementById('video-container').style.display = "block"; video.play(); }
+            else if (type === 'food') { info.innerHTML = "Sunlight lunch for now!<br>Candlelight dinner soon after marriage. 🕯️"; }
+            else { info.innerText = "🎁 A little surprise for you!"; }
+            if (giftsVisited.size >= 4) document.getElementById('final-btn').style.display = "block";
+        }
+
+        function backToGifts() {
+            video.pause();
+            document.getElementById('photo-container').style.display = "none";
+            document.getElementById('video-container').style.display = "none";
+            document.getElementById('gift-main-ui').style.display = "block";
+            bgMusic.play();
+        }
+    </script>
+</body>
 </html>

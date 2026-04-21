@@ -26,7 +26,6 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%);
-            overflow: hidden;
         }
 
         .floating-heart {
@@ -52,56 +51,59 @@
         section { display: none; animation: fadeIn 0.8s ease; }
         .active { display: block; }
 
-        .envelope-wrapper { position: relative; width: 280px; height: 180px; margin: 30px auto; cursor: pointer; perspective: 1000px; }
+        /* ENVELOPE & LETTER MECHANICS */
+        .envelope-wrapper { position: relative; width: 280px; height: 180px; margin: 40px auto; perspective: 1000px; }
         
         .envelope-body { 
             position: absolute; width: 100%; height: 100%; 
-            background: #b33939; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
-            display: flex; justify-content: center; align-items: flex-end;
-            z-index: 10; padding-bottom: 25px; border-radius: 8px;
-            border: 1px solid var(--gold);
+            background: #b33939; z-index: 10; 
+            border-radius: 8px; border: 1px solid var(--gold);
+            display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px;
         }
         
-        .envelope-label { color: var(--gold); font-style: italic; font-size: 1.1rem; text-shadow: 1px 1px 1px black; }
+        .envelope-label { color: var(--gold); font-style: italic; font-size: 1rem; pointer-events: none; }
 
         .flap {
             position: absolute; top: 0; left: 0; width: 100%; height: 0;
             border-left: 140px solid transparent; border-right: 140px solid transparent;
             border-top: 110px solid #8e2e2e; transform-origin: top; transition: 0.6s; z-index: 11;
+            cursor: pointer;
         }
         .open .flap { transform: rotateX(180deg); z-index: 5; }
 
         .letter {
-            position: absolute; bottom: 5px; left: 15px; width: 250px; height: 150px;
+            position: absolute; bottom: 10px; left: 15px; width: 250px; height: 140px;
             background: var(--parchment); border: 1px solid var(--gold);
             z-index: 6; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 20px; border-radius: 5px;
+            padding: 20px; border-radius: 5px; cursor: pointer;
         }
 
-        .letter.pop-out { 
-            transform: translateY(-50%) scale(1.1); 
+        /* Initial pop out when flap opens */
+        .open .letter { transform: translateY(-40px); }
+
+        /* Full expansion when letter is clicked */
+        .letter.expanded { 
+            transform: translateY(-50%) scale(1.1) !important; 
             top: 50%; left: 50%; margin-left: -160px; 
             height: 450px; z-index: 20; width: 320px; 
             box-shadow: 0 0 100px rgba(0,0,0,0.4);
+            cursor: default;
         }
 
-        /* TEXT HIDDEN UNTIL POP-OUT */
-        .letter-content { opacity: 0; visibility: hidden; transition: 0.4s ease-in-out; }
-        .letter.pop-out .letter-content { opacity: 1; visibility: visible; }
+        .letter-content { opacity: 0; visibility: hidden; transition: 0.4s; }
+        .letter.expanded .letter-content { opacity: 1; visibility: visible; }
 
+        /* BUTTONS */
         button {
             background: var(--love-red); color: white; border: none; padding: 12px 20px;
             margin: 10px auto; border-radius: 50px; cursor: pointer; font-weight: bold; width: 85%;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
         }
-        button:hover { transform: scale(1.05); background: var(--deep-rose); }
-        .choice-btn { width: 42%; display: inline-block; margin: 5px; padding: 10px; font-size: 0.9rem; }
+        .close-btn { background: var(--deep-rose); width: auto; margin-top: 20px; }
         .gift-btn { width: 46%; display: inline-block; margin: 1%; background: var(--deep-rose); }
         .back-btn { background: #666; width: auto; font-size: 0.8rem; padding: 8px 15px; }
 
         .memory-img { width: 75%; border-radius: 15px; border: 4px solid white; margin: 15px auto; }
-        video { width: 100%; border-radius: 15px; border: 3px solid white; margin-bottom: 10px; }
+        video { width: 100%; border-radius: 15px; border: 3px solid white; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -109,7 +111,6 @@
 <body>
 
     <audio id="bg_music" loop><source src="music1.mp3" type="audio/mpeg"></audio>
-
     <div class="bg-layer" id="heart-bg"></div>
 
     <div class="card">
@@ -126,32 +127,29 @@
         </section>
 
         <section id="step3">
-            <p id="instruction" style="color: var(--deep-rose); font-weight: bold; margin-bottom: 10px;">Open the envelope to see my heart...</p>
-            <div class="envelope-wrapper" id="env-wrap" onclick="handleLetterFlow()">
-                <div class="flap" id="flap"></div>
+            <p id="instruction" style="color: var(--deep-rose); font-weight: bold;">Click the flap to open...</p>
+            
+            <div class="envelope-wrapper" id="env-wrap">
+                <div class="flap" id="flap" onclick="openFlap()"></div>
                 <div class="envelope-body">
                     <div class="envelope-label">To my Love, With Love</div>
                 </div>
-                <div class="letter" id="letter">
+                <div class="letter" id="letter" onclick="expandLetter()">
                     <div class="letter-content" id="letter-text">
                         <div style="color:var(--love-red); font-size: 1.5rem; margin-bottom: 10px;">❦</div>
                         <p><strong>Ente Dearest Wife-nu,</strong></p>
                         <p style="font-size: 0.9rem; line-height: 1.5; margin: 15px 0;">Happy Birthday! Coimbatore-il meet cheythathum, nammude travel memories-um treasure pole undu.</p>
                         <p>I will forever love you. ❤️</p>
                         
-                        <div style="margin-top: 25px;">
-                            <p style="font-size: 0.8rem; color: #777;">Reserve this letter?</p>
-                            <button class="choice-btn" onclick="confirmReserve(event, true)">Yes</button>
-                            <button class="choice-btn" onclick="confirmReserve(event, false)">No</button>
-                        </div>
+                        <button class="close-btn" onclick="closeAndNext(event)">Close Letter</button>
                     </div>
                 </div>
             </div>
 
-            <div id="move-consent" style="display:none; animation: fadeIn 1s ease;">
+            <div id="move-consent" style="display:none;">
                 <h3 style="color: var(--deep-rose);">Ready for your surprises? ✨</h3>
-                <button class="choice-btn" onclick="showPage('step4')">Yes</button>
-                <button class="choice-btn" onclick="alert('Take your time ❤️')">No</button>
+                <button style="width:45%; display:inline-block;" onclick="showPage('step4')">Yes</button>
+                <button style="width:45%; display:inline-block;" onclick="alert('Take your time ❤️')">No</button>
             </div>
         </section>
 
@@ -187,7 +185,7 @@
     </div>
 
     <script>
-        let flow = 0, giftsVisited = new Set();
+        let giftsVisited = new Set();
         const bgMusic = document.getElementById("bg_music");
         const video = document.getElementById("song-video");
 
@@ -211,36 +209,43 @@
 
         function startExperience() { bgMusic.play(); showPage('step3'); }
 
-        function handleLetterFlow() {
-            const wrap = document.getElementById('env-wrap'), letter = document.getElementById('letter'), instruct = document.getElementById('instruction');
-            if (flow === 0) { 
-                wrap.classList.add('open'); 
-                flow = 1; 
-                instruct.innerText = "Click again to pull out the letter";
-            }
-            else if (flow === 1) { 
-                letter.classList.add('pop-out'); 
-                instruct.style.display = "none"; 
-                flow = 2; 
+        // Step 1: Open the flap and pop letter slightly
+        function openFlap() {
+            document.getElementById('env-wrap').classList.add('open');
+            document.getElementById('instruction').innerText = "Click the letter to read it...";
+        }
+
+        // Step 2: Expand the letter when she clicks the paper
+        function expandLetter() {
+            const wrap = document.getElementById('env-wrap');
+            if(wrap.classList.contains('open')) {
+                document.getElementById('letter').classList.add('expanded');
+                document.getElementById('instruction').style.display = "none";
             }
         }
 
-        function confirmReserve(event, yes) {
-            event.stopPropagation();
-            const letter = document.getElementById('letter'), wrap = document.getElementById('env-wrap');
+        // Step 3: Close letter, fold it back, and show next question
+        function closeAndNext(event) {
+            event.stopPropagation(); // Prevents re-triggering expand
+            const letter = document.getElementById('letter');
+            const wrap = document.getElementById('env-wrap');
             
-            // Hide the text immediately when reserving
-            document.getElementById('letter-text').style.opacity = "0"; 
-
+            // Hide text first
+            document.getElementById('letter-text').style.opacity = "0";
+            
             setTimeout(() => {
-                letter.classList.remove('pop-out');
-                setTimeout(() => { 
-                    wrap.classList.remove('open'); 
-                    // Hide the envelope and show the move-to-next-page section
-                    document.getElementById('env-wrap').style.display = "none";
-                    document.getElementById('move-consent').style.display = "block";
+                // Shrink letter
+                letter.classList.remove('expanded');
+                setTimeout(() => {
+                    // Close flap
+                    wrap.classList.remove('open');
+                    setTimeout(() => {
+                        // Hide envelope and show consent
+                        wrap.style.display = "none";
+                        document.getElementById('move-consent').style.display = "block";
+                    }, 600);
                 }, 800);
-            }, 400);
+            }, 300);
         }
 
         function giftTap(type) {
